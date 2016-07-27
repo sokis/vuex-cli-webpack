@@ -1,3 +1,3 @@
 module.exports = {
-	serve: require('./dist/bin/server')
+	serve: require('./lib/bin/server')
 }

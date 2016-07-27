@@ -11,8 +11,13 @@
     "vuex-cli-webpack": "bin/"
   },
   "scripts": {
-    "build:watch": "./node_modules/.bin/babel src --watch -d dist",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "env NODE_PATH=$NODE_PATH:$PWD/src ./node_modules/.bin/babel-node ./node_modules/.bin/_mocha --compilers js:babel-register --opts ./.mocharc ",
+    "start": "npm run build:watch",
+    "build": "./node_modules/.bin/babel src -d lib",
+    "build:watch": "./node_modules/.bin/babel src --watch -d lib",
+    "clean": "rimraf lib",
+    "publish:patch": "npm test && npm run clean && npm run build && npm version patch && npm publish",
+    "publish:minor": "npm test && npm run clean && npm run build && npm version minor && npm publish"
   },
   "repository": {
     "type": "git",
@@ -85,7 +90,13 @@
     "koa-proxy": "^0.6.0",
     "koa-static": "^3.0.0",
     "webpack-dev-middleware": "^1.6.1",
-    "webpack-hot-middleware": "^2.6.0"
+    "webpack-hot-middleware": "^2.6.0",
+    "chai": "^3.5.0",
+    "codecov": "^1.0.1",
+    "eslint": "^1.10.3",
+    "mocha": "^2.4.5",
+    "rimraf": "^2.5.2",
+    "sinon": "^1.17.3"
   },
   "bugs": {
     "url": "https://github.com/sokis/vuex-cli-webpack/issues"
