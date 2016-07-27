@@ -7,7 +7,7 @@ import config from '../config'
 const debug = _debug('app:bin:compile')
 const paths = config.utils_paths
 
-;(async function () {
+export default function () {
   try {
     debug('Run compiler')
     const stats = await webpackCompiler(webpackConfig)
@@ -21,4 +21,4 @@ const paths = config.utils_paths
     debug('Compiler encountered an error.', e)
     process.exit(1)
   }
-})()
+}
