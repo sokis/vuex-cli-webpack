@@ -11,9 +11,9 @@ export default {
   development: (config) => ({
     compiler_public_path: `http://${config.server_host}:${config.server_port}/`,
     proxy: {
-      enabled: true,
+      enabled: false,
       options: {
-        host: 'http://cnodejs.org/',
+        host: 'http://localhost:8080/',
         match: /^\/api\/.*/
       }
     }

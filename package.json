@@ -18,7 +18,8 @@
     "build:watch": "./node_modules/.bin/babel src --watch -d lib",
     "clean": "rimraf lib",
     "publish:patch": "npm test && npm run clean && npm run build && npm version patch && npm publish",
-    "publish:minor": "npm test && npm run clean && npm run build && npm version minor && npm publish"
+    "publish:minor": "npm test && npm run clean && npm run build && npm version minor && npm publish",
+    "release":"bash build/release.sh"
   },
   "repository": {
     "type": "git",

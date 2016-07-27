@@ -36,12 +36,22 @@ $ node ./node_modules/.bin/vuex-webpack-compile
 /**
  *  webpack 相关配置 
  */
+var compiler_vendor =  [
+	'history',
+	'vue',
+	'vue-router',
+	'vuex',
+	'vuex-localstorage',
+	'vuex-promise',
+];
+
 module.exports = {
+	
 	// ======================================================
 	// NODE_ENV === 'development'
 	development: function (config) {
-		
 		return {
+			compiler_vendor:compiler_vendor,
 			compiler_public_path: `http://${config.server_host}:${config.server_port}/`,
 			proxy: {
 				enabled: true,
@@ -62,6 +72,7 @@ module.exports = {
 	production: function (config) {
 
 		return {
+			compiler_vendor:compiler_vendor,
 			compiler_public_path: '/',
 			compiler_fail_on_warning: false,
 			compiler_hash_type: 'chunkhash',

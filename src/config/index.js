@@ -52,7 +52,6 @@ const config = {
   },
   compiler_vendor: [
     'history',
-    'plato-request',
     'vue',
     'vue-router',
     'vuex',
@@ -111,22 +110,6 @@ config.globals = {
 
 
 // ------------------------------------
-// Validate Vendor Dependencies
-// ------------------------------------
-const pkg = require(`${config.path_base}/package.json`)
-
-config.compiler_vendor = config.compiler_vendor
-  .filter((dep) => {
-    if (pkg.dependencies[dep]) return true
-
-    debug(
-      `Package "${dep}" was not found as an npm dependency in package.json; ` +
-      `it won't be included in the webpack vendor bundle.
-       Consider removing it from vendor_dependencies in ~/config/index.js`
-    )
-  })
-
-// ------------------------------------
 // Utilities
 // ------------------------------------
 const resolve = path.resolve
@@ -152,7 +135,7 @@ try {
     debug('Merge webpack config .')
     const environments = require(`${process.env.PWD}/webpack.config`)
     const overrides = environments[config.env]
-    
+
     if (overrides) {
       Object.assign(config, overrides(config))
     }
@@ -165,5 +148,22 @@ if (overrides) {
 } else {
   debug('No environment overrides found, defaults will be used.')
 }
+
+
+// ------------------------------------
+// Validate Vendor Dependencies
+// ------------------------------------
+const pkg = require(`${config.path_base}/package.json`)
+
+config.compiler_vendor = config.compiler_vendor
+  .filter((dep) => {
+    if (pkg.dependencies[dep]) return true
+
+    debug(
+      `Package "${dep}" was not found as an npm dependency in package.json; ` +
+      `it won't be included in the webpack vendor bundle.
+       Consider removing it from vendor_dependencies in ~/config/index.js`
+    )
+  })
 
 export default config
