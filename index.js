@@ -1,3 +1,4 @@
 module.exports = {
-	serve: require('./lib/bin/server')
+	server: require('./lib/bin/server'),
+	compile: require('./lib/bin/compile')
 }

@@ -4,6 +4,9 @@ import _debug from 'debug'
 import { argv } from 'yargs'
 import ip from 'ip'
 
+import { join } from 'path'
+import fs from 'fs'
+
 const localip = ip.address()
 const debug = _debug('app:config')
 debug('Creating default configuration.')
@@ -142,6 +145,20 @@ config.utils_paths = {
 debug(`Looking for environment overrides for NODE_ENV "${config.env}".`)
 const environments = require('./environments')
 const overrides = environments[config.env]
+
+try {
+  //找到当前运行环境下的 webpack.config 并且合并
+  if (fs.existsSync(join(config.path_base, 'webpack.config.js'))) {
+    debug('Merge webpack config .')
+    const environments = require(`${process.env.PWD}/webpack.config`)
+    const overrides = environments[config.env]
+    
+    if (overrides) {
+      Object.assign(config, overrides(config))
+    }
+  }
+} catch (error) { }
+
 if (overrides) {
   debug('Found overrides, applying to default configuration.')
   Object.assign(config, overrides(config))
