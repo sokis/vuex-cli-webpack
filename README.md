@@ -13,75 +13,98 @@ server();
 
 **命令行调用**
 ```
-## 启动开发服务器
+# 启动开发服务器
 $ node ./node_modules/.bin/vuex-webpack-server
 
 
-## 编译代码
+# 编译代码
 $ node ./node_modules/.bin/vuex-webpack-compile
 
 ```
 
+## 一些约束
+默认的配置是按照目前流行的配置方案来做的，实际开发中多少会需要修改
+这个时候，你只需要在项目根目录下创建`config`文件夹，并且在文件夹下添加对应的配置文件即可
+```
+config
+├── development.conf.js      # 开发环境配置
+├── production.conf.js		 # 生产环境配置
+├── ... ...					 # 测试相关等
+└── webpack.config.js		 # webpack配置
+```
+
+## development.conf.js
+
+开发环境下的配置文件
+
+```javascript
+// ======================================================
+// NODE_ENV === 'development'
+// ======================================================
+
+var config = require('../../lib/config')
+
+module.exports = {
+	compiler_public_path: `http://${config.server_host}:${config.server_port}/`,
+	proxy: {
+		enabled: true,
+		options: {
+			host: 'http://cnodejs.org/',
+			match: /^\/api\/.*/
+		}
+	}
+}
+```
+
+## production.conf.js
+
+生产环境下的配置文件
+
+```javascript
+// ======================================================
+// NODE_ENV === 'production'
+// ======================================================
+module.exports = {
+	compiler_public_path: '/',
+	compiler_hash_type: 'chunkhash',
+	compiler_devtool: null,
+	compiler_stats: {
+		chunks: true,
+		chunkModules: true,
+		colors: true
+	}
+}
+```
+
+### 一部分配置项说明
+
++ **compiler_public_path**：webpack.publicPath 用法相同
++ **proxy**：用于配置代理服务器
+	- enabled: 是否启用代理
+	- options: 具体可以参考`koa-proxy`
++ **compiler_hash_type**：设置文件名中hash命名类型
+
 
 ## webpack.config.js
 
-默认提供了一套配置，当需要修改配置请在当前项目根路径下添加 `webpack.config.js`
-为了方便调用默认配置，配置方式做了些调整
-
-> 升级原有的配置，只需要根据情况做些调整即可
+默认提供了一套配置，当需要修改配置请在项目根路径下`config`目录中添加 `webpack.config.js`
 
 ```javascript
-//webpack.config.js
+// ======================================================
+// webpack.config.js
+// ======================================================
 
-/**
- *  webpack 相关配置 
- */
-var compiler_vendor =  [
-	'history',
-	'vue',
-	'vue-router',
-	'vuex',
-	'vuex-localstorage',
-	'vuex-promise',
-];
+var config = require('vuex-cli-webpack/lib/config')
+var paths = config.utils_paths
 
-module.exports = {
-	
-	// ======================================================
-	// NODE_ENV === 'development'
-	development: function (config) {
-		return {
-			compiler_vendor:compiler_vendor,
-			compiler_public_path: `http://${config.server_host}:${config.server_port}/`,
-			proxy: {
-				enabled: true,
-				options: {
-					host: 'http://cnodejs.org/',
-					match: /^\/api\/.*/
-				}
-			},
-
-			// 添加自定义配置
-			myconfig: 1111
-		}
+module.exports  = {
+	entry: {
+		app: './src/main.js'
 	},
-
-	// ======================================================
-	// NODE_ENV === 'production'
-	// ======================================================
-	production: function (config) {
-
-		return {
-			compiler_vendor:compiler_vendor,
-			compiler_public_path: '/',
-			compiler_fail_on_warning: false,
-			compiler_hash_type: 'chunkhash',
-			compiler_devtool: null,
-			compiler_stats: {
-				chunks: true,
-				chunkModules: true,
-				colors: true
-			}
+	resolve: {
+		alias: {
+			"store": paths.client('vuex'),
+			"components": paths.client('components')
 		}
 	}
 }

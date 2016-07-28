@@ -29,7 +29,7 @@ const config = {
   path_base: process.env.PWD,
   dir_client: 'src',
   dir_dist: 'dist',
-  dir_conf: '.tools/config',
+  dir_conf: 'config',
   dir_test: 'test',
 
   // ----------------------------------
