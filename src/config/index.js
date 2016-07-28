@@ -7,6 +7,9 @@ import ip from 'ip'
 import { join } from 'path'
 import fs from 'fs'
 
+import merge from 'webpack-merge'
+import loadConfig from '../utils/load-config'
+
 const localip = ip.address()
 const debug = _debug('app:config')
 debug('Creating default configuration.')
@@ -26,7 +29,7 @@ const config = {
   path_base: process.env.PWD,
   dir_client: 'src',
   dir_dist: 'dist',
-  // dir_server: 'server',
+  dir_conf: '.tools/config',
   dir_test: 'test',
 
   // ----------------------------------
@@ -119,7 +122,8 @@ const base = (...args) =>
 config.utils_paths = {
   base: base,
   client: base.bind(null, config.dir_client),
-  dist: base.bind(null, config.dir_dist)
+  dist: base.bind(null, config.dir_dist),
+  conf: base.bind(null, config.dir_conf)
 }
 
 // ========================================================
@@ -129,18 +133,18 @@ debug(`Looking for environment overrides for NODE_ENV "${config.env}".`)
 const environments = require('./environments')
 const overrides = environments[config.env]
 
-try {
-  //找到当前运行环境下的 webpack.config 并且合并
-  if (fs.existsSync(join(config.path_base, 'webpack.config.js'))) {
-    debug('Merge webpack config .')
-    const environments = require(`${process.env.PWD}/webpack.config`)
-    const overrides = environments[config.env]
+// try {
+//   //找到当前运行环境下的 webpack.config 并且合并
+//   if (fs.existsSync(join(config.path_base, 'webpack.config.js'))) {
+//     debug('Merge webpack config .')
+//     const environments = require(`${process.env.PWD}/webpack.config`)
+//     const overrides = environments[config.env]
 
-    if (overrides) {
-      Object.assign(config, overrides(config))
-    }
-  }
-} catch (error) { }
+//     if (overrides) {
+//       Object.assign(config, overrides)
+//     }
+//   }
+// } catch (error) { }
 
 if (overrides) {
   debug('Found overrides, applying to default configuration.')
@@ -148,7 +152,6 @@ if (overrides) {
 } else {
   debug('No environment overrides found, defaults will be used.')
 }
-
 
 // ------------------------------------
 // Validate Vendor Dependencies
@@ -166,4 +169,7 @@ config.compiler_vendor = config.compiler_vendor
     )
   })
 
-export default config
+
+const { conf } = config.utils_paths
+// load config 
+export default merge(config, loadConfig(conf(`${config.env}.conf`)))

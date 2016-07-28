@@ -3,10 +3,14 @@ import cssnano from 'cssnano'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import config, {utils_paths} from '../config'
+import loadConfig from '../utils/load-config'
+import merge from 'webpack-merge'
+
 import _debug from 'debug'
 
 const debug = _debug('app:webpack:config')
 const paths = config.utils_paths
+
 const {__DEV__, __PROD__, __TEST__} = config.globals
 
 debug('Create configuration.')
@@ -18,8 +22,8 @@ const webpackConfig = {
 		root: paths.client(),
 		extensions: ['', '.css', '.js', '.json', '.vue'],
 		alias: {
-			store: paths.client('vuex'),
-			coms: paths.client('components')
+			"store": paths.client('vuex'),
+			"components": paths.client('components')
 		},
 		modulesDirectories: ['node_modules']
 	},
@@ -130,16 +134,7 @@ webpackConfig.module.loaders = [
 	{
 		test: /\.(js)$/,
 		exclude: /node_modules/,
-		loader: 'babel',
-		query: {
-			cacheDirectory: true,
-			plugins: [
-				"add-module-exports",
-				"transform-async-to-generator",
-				"transform-runtime"
-			],
-			presets: ['es2015', 'stage-0']
-		}
+		loader: 'babel'
 	},
 	{
 		test: /\.(png|jpg|gif|svg|woff2?|eot|ttf)(\?.*)?$/,
@@ -248,7 +243,7 @@ webpackConfig.vue = {
 			require('postcss-reporter')()
 		]
 	},
-  	autoprefixer: false
+	autoprefixer: false
 }
 
 // ------------------------------------
@@ -274,4 +269,5 @@ if (!__DEV__) {
 	)
 }
 
-export default webpackConfig
+// load config 
+export default merge(webpackConfig, loadConfig(paths.conf('webpack.config')))

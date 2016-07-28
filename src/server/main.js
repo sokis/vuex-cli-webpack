@@ -21,7 +21,6 @@ const paths = config.utils_paths
 const port = config.server_port
 const host = config.server_host
 
-
 export default function () {
 
   const app = new Koa()
@@ -33,7 +32,8 @@ export default function () {
   if (config.proxy && config.proxy.enabled) {
     app.use(convert(proxy(config.proxy.options)))
 
-  } else if (config.server_mock) { // mocking .
+  } else if (config.server_mock) { 
+    // mocking .
     app.use(mocking({
       root: paths.base(),
       matcher: /^\/apis\//,

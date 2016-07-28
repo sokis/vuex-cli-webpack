@@ -12,5 +12,4 @@ describe('(Serve) main', () => {
 		expect(typeof (server) === 'function').to.be.true;
 	});
 
-
 });
