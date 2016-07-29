@@ -6,10 +6,6 @@ import ip from 'ip'
 
 import { join } from 'path'
 import fs from 'fs'
-
-import merge from 'webpack-merge'
-import loadConfig from '../utils/load-config'
-
 const localip = ip.address()
 const debug = _debug('app:config')
 debug('Creating default configuration.')
@@ -133,19 +129,6 @@ debug(`Looking for environment overrides for NODE_ENV "${config.env}".`)
 const environments = require('./environments')
 const overrides = environments[config.env]
 
-// try {
-//   //找到当前运行环境下的 webpack.config 并且合并
-//   if (fs.existsSync(join(config.path_base, 'webpack.config.js'))) {
-//     debug('Merge webpack config .')
-//     const environments = require(`${process.env.PWD}/webpack.config`)
-//     const overrides = environments[config.env]
-
-//     if (overrides) {
-//       Object.assign(config, overrides)
-//     }
-//   }
-// } catch (error) { }
-
 if (overrides) {
   debug('Found overrides, applying to default configuration.')
   Object.assign(config, overrides(config))
@@ -153,23 +136,4 @@ if (overrides) {
   debug('No environment overrides found, defaults will be used.')
 }
 
-// ------------------------------------
-// Validate Vendor Dependencies
-// ------------------------------------
-const pkg = require(`${config.path_base}/package.json`)
-
-config.compiler_vendor = config.compiler_vendor
-  .filter((dep) => {
-    if (pkg.dependencies[dep]) return true
-
-    debug(
-      `Package "${dep}" was not found as an npm dependency in package.json; ` +
-      `it won't be included in the webpack vendor bundle.
-       Consider removing it from vendor_dependencies in ~/config/index.js`
-    )
-  })
-
-
-const { conf } = config.utils_paths
-// load config 
-export default merge(config, loadConfig(conf(`${config.env}.conf`)))
+export default config

@@ -4,11 +4,11 @@ import serve from 'koa-static'
 import convert from 'koa-convert'
 import proxy from 'koa-proxy'
 import webpack from 'webpack'
-import webpackConfig from '../build/webpack.config'
+import webpackConfig from '../build/merge'
 import historyApiFallback from 'koa-connect-history-api-fallback'
 
 import _debug from 'debug'
-import config from '../config'
+import config from '../config/merge'
 import webpackDevMiddleware from './middleware/webpack-dev'
 import webpackHMRMiddleware from './middleware/webpack-hmr'
 

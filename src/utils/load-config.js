@@ -2,22 +2,24 @@ import fs from 'fs'
 import _debug from 'debug'
 
 const debug = _debug('app:config')
-const loadConfig = configPath => {
+const loadConfig = (configPath) => {
 
-	let config = {}
+	let _config = {}
 
 	// load config
 	try {
-		//找到当前运行环境下的 webpack.config 并且合并
+		//找到当前运行环境下的 配置 文件
 		if (fs.existsSync(`${configPath}.js`)) {
-			debug('Merge webpack config .')
-			config = require(configPath)
+			debug(`Load config : ${configPath}`)
+			_config = require(configPath)
+
+			// if(_config)
 		}
 	} catch (error) {
-		console.log(error);
+		debug(`Load config Error: ${error.message}`)
 	}
 
-	return config
+	return  _config
 }
 
 export default loadConfig

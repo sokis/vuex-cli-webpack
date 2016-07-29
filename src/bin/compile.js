@@ -1,8 +1,10 @@
+process.env.NODE_ENV  = 'production'
+
 import fs from 'fs-extra'
 import _debug from 'debug'
 import webpackCompiler from '../build/webpack.compiler'
 import webpackConfig from '../build/webpack.config'
-import config from '../config'
+import config from '../config/merge'
 
 const debug = _debug('app:bin:compile')
 const paths = config.utils_paths

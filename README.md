@@ -8,7 +8,8 @@
 import { server , compile} from 'vuex-cli-webpack'
 
 //调用
-server();
+server()
+compile()
 ```
 
 **命令行调用**
@@ -29,7 +30,7 @@ $ node ./node_modules/.bin/vuex-webpack-compile
 config
 ├── development.conf.js      # 开发环境配置
 ├── production.conf.js		 # 生产环境配置
-├── ... ...					 # 测试相关等
+├── ... ...					 # 测试等
 └── webpack.config.js		 # webpack配置
 ```
 
@@ -42,7 +43,7 @@ config
 // NODE_ENV === 'development'
 // ======================================================
 
-var config = require('../../lib/config')
+var config = require('vuex-cli-webpack/lib/config')
 
 module.exports = {
 	compiler_public_path: `http://${config.server_host}:${config.server_port}/`,

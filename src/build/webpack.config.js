@@ -2,9 +2,7 @@ import webpack from 'webpack'
 import cssnano from 'cssnano'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
-import config, {utils_paths} from '../config'
-import loadConfig from '../utils/load-config'
-import merge from 'webpack-merge'
+import config, {utils_paths} from '../config/merge'
 
 import _debug from 'debug'
 
@@ -270,4 +268,4 @@ if (!__DEV__) {
 }
 
 // load config 
-export default merge(webpackConfig, loadConfig(paths.conf('webpack.config')))
+export default webpackConfig
