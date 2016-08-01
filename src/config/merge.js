@@ -1,7 +1,9 @@
 import loadConfig from '../utils/load-config'
 import merge from 'webpack-merge'
 import base, { utils_paths } from './index'
+import _debug from 'debug'
 
+const debug = _debug('app:webpack:config')
 
 // load config
 const config = loadConfig(utils_paths.conf(`${base.env}.conf`))
