@@ -1,5 +1,3 @@
-process.env.NODE_ENV  = 'production'
-
 import fs from 'fs-extra'
 import _debug from 'debug'
 import webpackCompiler from '../build/webpack.compiler'
@@ -9,10 +7,10 @@ import config from '../config/merge'
 const debug = _debug('app:bin:compile')
 const paths = config.utils_paths
 
-export default function () {
+export default (async function () {
   try {
     debug('Run compiler')
-    const stats = webpackCompiler(webpackConfig)
+    const stats = await webpackCompiler(webpackConfig)
     if (stats.warnings.length && config.compiler_fail_on_warning) {
       debug('Config set to fail on warning, exiting with status code "1".')
       process.exit(1)
@@ -23,4 +21,4 @@ export default function () {
     debug('Compiler encountered an error.', e)
     process.exit(1)
   }
-}
+})
