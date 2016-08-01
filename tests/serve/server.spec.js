@@ -1,4 +1,4 @@
-import server from 'server/main';
+import server from 'server/';
 
 
 describe('(Serve) main', () => {

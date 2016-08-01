@@ -1,3 +1,3 @@
-import server from '../server/main'
+import server from '../server/'
 
 export default server
