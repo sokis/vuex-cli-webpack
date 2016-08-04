@@ -22,7 +22,7 @@ const config = {
   // ----------------------------------
   // Project Structure
   // ----------------------------------
-  path_base: process.env.PWD,
+  path_base: process.cwd(),
   dir_client: 'src',
   dir_dist: 'dist',
   dir_conf: 'config',
