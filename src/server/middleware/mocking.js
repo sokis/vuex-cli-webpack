@@ -31,7 +31,7 @@ export default ({ root, matcher, reducer }) => {
     if (lastMatcher(ctx.url)) {
       const dest = join(lastReducer(ctx.path), ctx.method + '.json')
       if (fs.existsSync(join(root, dest))) {
-        ctx.status = 403
+        // ctx.status = 403
         if (await send(ctx, dest, { root })) {
           debug('Mock file found: %s', dest)
           return

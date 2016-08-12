@@ -26,14 +26,15 @@ app.use(logger())
 app.use(error())
 
 // Enable koa-proxy if it has been enabled in the config.
-if (config.proxy && config.proxy.enabled) {
+if (config.proxy && config.proxy.enabled && !config.server_mock) {
   app.use(convert(proxy(config.proxy.options)))
+}
 
-} else if (config.server_mock) {
+if (config.server_mock && config.proxy && config.proxy.options) {
   // mocking .
   app.use(mocking({
     root: paths.base(),
-    matcher: /^\/apis\//,
+    matcher: config.proxy.options.match,
     reducer: null
   }))
 }
