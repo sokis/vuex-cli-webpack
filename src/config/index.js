@@ -100,6 +100,7 @@ config.globals = {
   },
   'NODE_ENV': config.env,
   '__DEV__': config.env === 'development',
+  '__MOCK__': config.env === 'development' && config.server_mock,
   '__PROD__': config.env === 'production',
   '__TEST__': config.env === 'test',
   '__DEBUG__': config.env === 'development' && !argv.no_debug,
