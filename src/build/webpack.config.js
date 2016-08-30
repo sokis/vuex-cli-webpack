@@ -135,6 +135,10 @@ webpackConfig.module.loaders = [
 		loader: 'babel'
 	},
 	{
+		test: /\.html$/,
+		loader: 'vue-html'
+	},
+	{
 		test: /\.(png|jpg|gif|svg|woff2?|eot|ttf)(\?.*)?$/,
 		loader: 'url',
 		query: {
