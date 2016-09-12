@@ -20,7 +20,7 @@ const webpackConfig = {
 		root: paths.client(),
 		extensions: ['', '.css', '.js', '.json', '.vue'],
 		alias: {
-			"store": paths.client('vuex'),
+			"store": paths.client('store'),
 			"components": paths.client('components')
 		},
 		modulesDirectories: ['node_modules']
@@ -135,6 +135,14 @@ webpackConfig.module.loaders = [
 		loader: 'babel'
 	},
 	{
+		test: /\.vue$/,
+		loader: 'vue'
+	},
+	{
+		test: /\.json$/,
+		loader: 'json'
+	},
+	{
 		test: /\.html$/,
 		loader: 'vue-html'
 	},
@@ -145,14 +153,6 @@ webpackConfig.module.loaders = [
 			limit: 10000,
 			name: '[name].[ext]?[hash:7]'
 		}
-	},
-	{
-		test: /\.vue$/,
-		loader: 'vue'
-	},
-	{
-		test: /\.json$/,
-		loader: 'json'
 	}
 ]
 
