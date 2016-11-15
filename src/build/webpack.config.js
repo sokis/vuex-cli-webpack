@@ -113,7 +113,7 @@ will be removed in a future release.
 */
 webpackConfig.module.preLoaders = [{
   test: /\.(js|vue)$/,
-  loader: 'eslint',
+  loader: 'eslint-loader',
   exclude: /node_modules/
 }]
 

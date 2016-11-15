@@ -49,6 +49,14 @@ const config = {
     chunkModules: false,
     colors: true
   },
+  compiler_vendor: [
+    'history',
+    'vue',
+    'vue-router',
+    'vuex',
+    'vuex-localstorage',
+    'vuex-promise',
+  ],
 
   // ----------------------------------
   // Test Configuration
