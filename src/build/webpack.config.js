@@ -192,19 +192,19 @@ webpackConfig.vue = {
   postcss: pack => {
     return [
       require('postcss-import')({
-        path: utils_paths.client('styles'),
+        path: paths.client('styles'),
         // use webpack context
         addDependencyTo: pack
       }),
       require('postcss-url')({
-        basePath: paths.src('static')
+        basePath: paths.client('static')
       }),
       require('postcss-cssnext')({
         // see: https://github.com/ai/browserslist#queries
         browsers: 'Android >= 4, iOS >= 7',
         features: {
           customProperties: {
-            variables: require(utils_paths.client('styles/variables'))
+            variables: require(paths.client('styles/variables'))
           }
         }
       }),
