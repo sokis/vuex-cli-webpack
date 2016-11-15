@@ -1,6 +1,6 @@
 {
   "name": "vuex-cli-webpack",
-  "version": "2.0.0-beta2",
+  "version": "2.0.0-beta3",
   "description": "vuex-cli 中的 webpack 任务。",
   "main": "index.js",
   "engines": {
