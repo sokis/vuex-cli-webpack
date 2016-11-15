@@ -5,6 +5,8 @@ import convert from 'koa-convert'
 import proxy from 'koa-proxy'
 import webpack from 'webpack'
 import webpackConfig from '../build/merge'
+import compress from 'koa-compress'
+  
 import historyApiFallback from 'koa-connect-history-api-fallback'
 
 import _debug from 'debug'
@@ -24,6 +26,7 @@ const app = new Koa()
 
 app.use(logger())
 app.use(error())
+app.use(compress())
 
 // Enable koa-proxy if it has been enabled in the config.
 if (config.proxy && config.proxy.enabled && !config.server_mock) {
