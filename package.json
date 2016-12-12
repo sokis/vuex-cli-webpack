@@ -1,7 +1,7 @@
 {
   "name": "vuex-cli-webpack",
   "version": "2.0.0-beta.5",
-  "description": "vuex-cli 中的 webpack 任务。",
+  "description": "vue2 + webpack2 构建服务命令行工具 ",
   "main": "index.js",
   "engines": {
     "node": ">=6.2.0",
@@ -27,8 +27,11 @@
   },
   "keywords": [
     "vue",
+    "vue2",
     "vuex",
+    "vuex2",
     "webpack",
+    "webpack2",
     "vuex-cli",
     "vuex-webpack"
   ],
@@ -45,7 +48,6 @@
     "babel-preset-stage-0": "^6.3.13",
     "babel-register": "^6.3.13",
     "babel-runtime": "^6.3.19",
-    "chai": "^3.5.0",
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.26.0",
     "debug": "^2.2.0",
