@@ -1,6 +1,7 @@
 # vuex-cli-webpack
-抽离webpack 构建相关任务。已经集成到`vuex-cli@2.0` .
-也可以单独使用
+一个独立的vue2+webpack2 构建，基开发配置工具
+1. 独立的配置项依赖 做专业的事
+1. 支持自定义配置，扩展方便原始项目迁移
 
 ## 使用方法
 
@@ -15,11 +16,11 @@ compile()
 **命令行调用**
 ```
 # 启动开发服务器
-$ node ./node_modules/.bin/vuex-webpack-server
+$ node ./node_modules/.bin/vserver
 
 
 # 编译代码
-$ node ./node_modules/.bin/vuex-webpack-compile
+$ node ./node_modules/.bin/vcompile
 
 ```
 
@@ -40,21 +41,12 @@ config
 
 ```javascript
 // ======================================================
-// NODE_ENV === 'development'
+// Overrides when NODE_ENV === 'development'
 // ======================================================
-
-var config = require('vuex-cli-webpack/lib/config')
-
-module.exports = {
-	compiler_public_path: `http://${config.server_host}:${config.server_port}/`,
-	proxy: {
-		enabled: true,
-		options: {
-			host: 'http://cnodejs.org/',
-			match: /^\/api\/.*/
-		}
-	}
-}
+module.exports = config => ({
+  compiler_public_path: '/',
+  compiler_devtool: 'eval'
+})
 ```
 
 ## production.conf.js
@@ -63,27 +55,26 @@ module.exports = {
 
 ```javascript
 // ======================================================
-// NODE_ENV === 'production'
+// Overrides when NODE_ENV === 'production'
 // ======================================================
-module.exports = {
-	compiler_public_path: '/',
-	compiler_hash_type: 'chunkhash',
-	compiler_devtool: null,
-	compiler_stats: {
-		chunks: true,
-		chunkModules: true,
-		colors: true
-	}
-}
+module.exports = config => ({
+  compiler_public_path: '',
+  compiler_devtool: false,
+  compiler_hash_type: 'chunkhash',
+  compiler_html_minify: true,
+  compiler_stats: {
+    chunks: true,
+	chunkModules: true,
+	colors: true
+  }
+})
 ```
 
 ### 一部分配置项说明
 
 + **compiler_public_path**：webpack.publicPath 用法相同
-+ **proxy**：用于配置代理服务器
-	- enabled: 是否启用代理
-	- options: 具体可以参考`koa-proxy`
 + **compiler_hash_type**：设置文件名中hash命名类型
++ **compiler_html_minify**：设置html,js,css是否压缩
 
 
 ## webpack.config.js
@@ -94,18 +85,14 @@ module.exports = {
 // ======================================================
 // webpack.config.js
 // ======================================================
-
-var config = require('vuex-cli-webpack/lib/config')
-var paths = config.utils_paths
-
-module.exports  = {
+module.exports = ({ paths }) => {
 	entry: {
 		app: './src/main.js'
 	},
 	resolve: {
 		alias: {
-			"store": paths.client('vuex'),
-			"components": paths.client('components')
+			"store": paths.src('store'),
+			"components": paths.src('components')
 		}
 	}
 }

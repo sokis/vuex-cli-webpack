@@ -1,0 +1,37 @@
+{
+  "name": "vendor.dll",
+  "content": {
+    "./node_modules/process/browser.js": {
+      "id": 86,
+      "meta": {}
+    },
+    "./node_modules/vue-router/dist/vue-router.common.js": {
+      "id": 116,
+      "meta": {}
+    },
+    "./node_modules/vue/dist/vue.js": {
+      "id": 117,
+      "meta": {}
+    },
+    "./node_modules/vuex-actions/dist/vuex-actions.js": {
+      "id": 118,
+      "meta": {}
+    },
+    "./node_modules/vuex-localstorage/dist/index.js": {
+      "id": 119,
+      "meta": {}
+    },
+    "./node_modules/vuex-router-sync/index.js": {
+      "id": 120,
+      "meta": {}
+    },
+    "./node_modules/vuex/dist/vuex.js": {
+      "id": 121,
+      "meta": {}
+    },
+    "./node_modules/webpack/buildin/global.js": {
+      "id": 59,
+      "meta": {}
+    }
+  }
+}

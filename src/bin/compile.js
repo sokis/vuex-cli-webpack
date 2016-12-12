@@ -1,13 +1,12 @@
 import fs from 'fs-extra'
 import _debug from 'debug'
 import webpackCompiler from '../build/webpack.compiler'
-import webpackConfig from '../build/merge'
-import config from '../config/merge'
+import webpackConfig from '../build'
+import config, { paths } from '../config'
 
 const debug = _debug('app:bin:compile')
-const paths = config.utils_paths
 
-export default (async function () {
+export default (async function() {
   try {
     debug('Run compiler')
     const stats = await webpackCompiler(webpackConfig)
@@ -16,7 +15,7 @@ export default (async function () {
       process.exit(1)
     }
     debug('Copy static assets to dist folder.')
-    fs.copySync(paths.client('static'), paths.dist())
+    fs.copySync(paths.src('static'), paths.dist())
   } catch (e) {
     debug('Compiler encountered an error.', e)
     process.exit(1)

@@ -1,0 +1,40 @@
+{
+  "name": "vuex-webpack",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development DEBUG=app:* vserver",
+    "compile": "cross-env NODE_ENV=production DEBUG=app:* vcompile",
+    "dll": "webpack --config ./config/webpack.dll.config.js --progress"
+  },
+  "dependencies": {
+    "vue": "^2.1.4",
+    "vue-router": "^2.1.1",
+    "vuex": "^2.0.0",
+    "vuex-actions": "^1.1.1",
+    "vuex-cli-webpack": "file:../../",
+    "vuex-localstorage": "^0.4.0",
+    "vuex-router-sync": "^2.1.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.1.1",
+    "babel-helper-vue-jsx-merge-props": "^2.0.2",
+    "babel-plugin-syntax-jsx": "^6.18.0",
+    "babel-plugin-transform-vue-jsx": "^3.2.0",
+    "better-npm-run": "0.0.9",
+    "cross-env": "^3.1.3",
+    "eslint": "^3.11.1",
+    "eslint-config-standard": "^6.2.1",
+    "eslint-config-vue": "^2.0.1",
+    "eslint-loader": "^1.6.1",
+    "eslint-plugin-babel": "^3.3.0",
+    "eslint-plugin-promise": "^3.3.2",
+    "eslint-plugin-standard": "^2.0.1",
+    "eslint-plugin-vue": "^1.0.0",
+    "humps": "^2.0.0",
+    "nodemon": "^1.10.0",
+    "query-string": "^4.2.3",
+    "string-template": "^1.0.0"
+  }
+}

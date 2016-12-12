@@ -1,6 +1,6 @@
 import webpack from 'webpack'
 import _debug from 'debug'
-import config from '../config/merge'
+import config from '../config'
 
 const debug = _debug('app:build:webpack-compiler')
 const DEFAULT_STATS_FORMAT = config.compiler_stats

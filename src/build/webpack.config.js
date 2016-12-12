@@ -1,53 +1,62 @@
 import webpack from 'webpack'
-import cssnano from 'cssnano'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
+import CopyWebpackPlugin from 'copy-webpack-plugin'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
-import config, { utils_paths } from '../config/merge'
+import config, { paths } from '../config'
 
 import _debug from 'debug'
-
-const debug = _debug('app:webpack:config')
-const paths = config.utils_paths
-
+const debug = _debug('app:webpack')
 const { __DEV__, __PROD__, __TEST__ } = config.globals
 
 debug('Create configuration.')
 const webpackConfig = {
-    name: 'client',
-    target: 'web',
-    devtool: config.compiler_devtool,
-    resolve: {
-      root: paths.client(),
-      extensions: ['', '.css', '.js', '.json', '.vue'],
-      alias: {
-        "store": paths.client('store'),
-        "components": paths.client('components')
-      },
-      modulesDirectories: ['node_modules']
-    },
-    module: {}
-  }
-  // ------------------------------------
-  // Entry Points
-  // ------------------------------------
+  name: 'client',
+  target: 'web',
+  resolve: {
+    modules: [paths.src(), 'node_modules'],
+    extensions: ['.css', '.js', '.json', '.vue'],
+    alias: {}
+  },
+  node: { fs: 'empty', net: 'empty' },
+  module: {},
+  devtool: config.compiler_devtool
+}
+
+// ------------------------------------
+// Webpack Dev Server
+// ------------------------------------
+webpackConfig.devServer = {
+  contentBase: paths.src(),
+  host: config.server_host,
+  port: config.server_port,
+  quiet: config.compiler_quiet,
+  stats: config.compiler_stats,
+  compress: true,
+  lazy: false,
+  hot: true,
+  noInfo: false
+}
+
+// ------------------------------------
+// Entry Points
+// ------------------------------------
 const APP_ENTRY_PATHS = [
-  'babel-polyfill',
-  paths.client('main.js')
+  paths.src('main.js')
 ]
 
 webpackConfig.entry = {
-  app: __DEV__ ?
-    APP_ENTRY_PATHS.concat(`webpack-hot-middleware/client?path=${config.compiler_public_path}__webpack_hmr`) : APP_ENTRY_PATHS,
-  vendor: config.compiler_vendor
+  app: APP_ENTRY_PATHS //,
+    // vendor: config.compiler_vendor
 }
 
 // ------------------------------------
 // Bundle Output
 // ------------------------------------
 webpackConfig.output = {
-  filename: `[name].[${config.compiler_hash_type}].js`,
   path: paths.dist(),
-  publicPath: config.compiler_public_path
+  publicPath: config.compiler_public_path,
+  filename: `js/[name].[${config.compiler_hash_type}].js`,
+  chunkFilename: `js/[id].[${config.compiler_hash_type}].js`
 }
 
 // ------------------------------------
@@ -55,161 +64,104 @@ webpackConfig.output = {
 // ------------------------------------
 webpackConfig.plugins = [
   new webpack.DefinePlugin(config.globals),
+  new webpack.NamedModulesPlugin(),
   new HtmlWebpackPlugin({
-    template: paths.client('index.html'),
+    template: paths.src('index.html'),
     hash: false,
-    favicon: paths.client('static/favicon.ico'),
+    favicon: paths.src('static/favicon.ico'),
     filename: 'index.html',
     inject: 'body',
     minify: {
-      collapseWhitespace: true
+      collapseWhitespace: config.compiler_html_minify,
+      minifyJS: config.compiler_html_minify
     }
+  }),
+  new CopyWebpackPlugin([{
+    from: paths.src('static')
+  }], {
+    ignore: ['README.md']
   })
 ]
-
-if (__DEV__) {
-  debug('Enable plugins for live development (HMR, NoErrors).')
-  webpackConfig.plugins.push(
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
-  )
-} else if (__PROD__) {
-  debug('Enable plugins for production (OccurenceOrder, Dedupe & UglifyJS).')
-  webpackConfig.plugins.push(
-    new webpack.optimize.OccurrenceOrderPlugin(),
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        unused: true,
-        dead_code: true,
-        warnings: false
-      }
-    })
-  )
-}
-
-// Don't split bundles during testing, since we only want import one bundle
-if (!__TEST__) {
-  webpackConfig.plugins.push(
-    new webpack.optimize.CommonsChunkPlugin({
-      names: ['vendor']
-    })
-  )
-}
 
 // ------------------------------------
 // Pre-Loaders
 // ------------------------------------
-/*
-[ NOTE ]
-We no longer use eslint-loader due to it severely impacting build
-times for larger projects. `npm run lint` still exists to aid in
-deploy processes (such as with CI), and it's recommended that you
-use a linting plugin for your IDE in place of this loader.
-
-If you do wish to continue using the loader, you can uncomment
-the code below and run `npm i --save-dev eslint-loader`. This code
-will be removed in a future release.
-*/
-webpackConfig.module.preLoaders = [{
+const loaders = [{
   test: /\.(js|vue)$/,
+  exclude: /node_modules/,
   loader: 'eslint-loader',
-  exclude: /node_modules/
+  options: {
+    emitWarning: __DEV__,
+    formatter: require('eslint-friendly-formatter')
+  },
+  enforce: 'pre'
 }]
-
-webpackConfig.eslint = {
-  configFile: paths.base('.eslintrc'),
-  emitWarning: __DEV__
-}
-
 
 // ------------------------------------
 // Loaders
 // ------------------------------------
 // JavaScript / JSON
-webpackConfig.module.loaders = [{
-    test: /\.(js)$/,
-    exclude: /node_modules/,
-    loader: 'babel'
+webpackConfig.module.rules = loaders.concat([{
+    test: /\.vue$/,
+    loader: 'vue-loader',
+    options: {
+      loaders: {
+        css: __PROD__ ? ExtractTextPlugin.extract({
+          loader: 'css-loader?sourceMap',
+          fallbackLoader: 'vue-style-loader'
+        }) : 'vue-style-loader!css-loader?sourceMap&-minimize',
+        js: 'babel-loader'
+      }
+    }
   },
   {
-    test: /\.vue$/,
-    loader: 'vue'
+    test: /\.js$/,
+    exclude: /node_modules/,
+    loader: 'babel-loader'
   },
   {
     test: /\.json$/,
-    loader: 'json'
+    loader: 'json-loader'
   },
   {
     test: /\.html$/,
-    loader: 'vue-html'
+    loader: 'vue-html-loader'
   },
-
   /* eslint-disable */
-  { test: /\.woff(\?.*)?$/, loader: 'url?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/font-woff' },
-  { test: /\.woff2(\?.*)?$/, loader: 'url?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/font-woff2' },
-  { test: /\.otf(\?.*)?$/, loader: 'file?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=font/opentype' },
-  { test: /\.ttf(\?.*)?$/, loader: 'url?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/octet-stream' },
-  { test: /\.eot(\?.*)?$/, loader: 'file?prefix=fonts/&name=[path][name].[ext]' },
-  { test: /\.svg(\?.*)?$/, loader: 'url?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=image/svg+xml' },
-  { test: /\.(png|jpg)$/, loader: 'url?limit=8192' }
+  { test: /\.woff(\?.*)?$/, loader: 'url-loader?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/font-woff' },
+  { test: /\.woff2(\?.*)?$/, loader: 'url-loader?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/font-woff2' },
+  { test: /\.otf(\?.*)?$/, loader: 'file-loader?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=font/opentype' },
+  { test: /\.ttf(\?.*)?$/, loader: 'url-loader?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/octet-stream' },
+  { test: /\.eot(\?.*)?$/, loader: 'file-loader?prefix=fonts/&name=[path][name].[ext]' },
+  { test: /\.svg(\?.*)?$/, loader: 'url-loader?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=image/svg+xml' },
+  { test: /\.(png|jpg|gif)$/, loader: 'url-loader?limit=8192' }
   /* eslint-enable */
-]
-
-
-
-// ------------------------------------
-// Style Loaders
-// ------------------------------------
-// We use cssnano with the postcss loader, so we tell
-// css-loader not to duplicate minimization.
-const BASE_CSS_LOADER = (loaders => {
-  if (!__PROD__) {
-    return loaders.join('!')
-  }
-  const [first, ...rest] = loaders
-  return ExtractTextPlugin.extract(first, rest.join('!'))
-})([
-  'vue-style-loader',
-  'css?sourceMap&-minimize'
 ])
-
-// Loaders for files that should not be treated as CSS modules.
-webpackConfig.module.loaders.push({
-  test: /\.css$/,
-  exclude: null,
-  loaders: [
-    'style',
-    BASE_CSS_LOADER,
-    'postcss'
-  ]
-})
 
 // ------------------------------------
 // Style Configuration
 // ------------------------------------
-webpackConfig.vue = {
+const vueLoaderOptions = {
   postcss: pack => {
+    // use webpack context
     return [
       require('postcss-import')({
-        path: paths.client('styles'),
-        // use webpack context
+        path: paths.src('styles'),
         addDependencyTo: pack
       }),
       require('postcss-url')({
-        basePath: paths.client('static')
+        basePath: paths.src('static')
+      }),
+      require('postcss-mixins')({
+        mixinsDir: paths.src('styles/mixins')
       }),
       require('postcss-cssnext')({
-        // see: https://github.com/ai/browserslist#queries
         browsers: 'Android >= 4, iOS >= 7',
         features: {
           customProperties: {
-            variables: require(paths.client('styles/variables'))
+            variables: require(paths.src('styles/variables'))
           }
         }
-      }),
-      require('postcss-flexible')({
-        remUnit: 75
       }),
       require('postcss-browser-reporter')(),
       require('postcss-reporter')()
@@ -218,26 +170,38 @@ webpackConfig.vue = {
   autoprefixer: false
 }
 
-// ------------------------------------
-// Finalize Configuration
-// ------------------------------------
-// when we don't know the public path (we know it only when HMR is enabled [in development]) we
-// need to use the extractTextPlugin to fix this issue:
-// http://stackoverflow.com/questions/34133808/webpack-ots-parsing-error-loading-fonts/34133809#34133809
-if (!__DEV__) {
-  debug('Apply ExtractTextPlugin to CSS loaders.')
-  webpackConfig.module.loaders.filter((loader) =>
-    loader.loaders && loader.loaders.find((name) => /css/.test(name.split('?')[0]))
-  ).forEach((loader) => {
-    const [first, ...rest] = loader.loaders
-    loader.loader = ExtractTextPlugin.extract(first, rest.join('!'))
-    Reflect.deleteProperty(loader, 'loaders')
-  })
-
+if (__DEV__) {
+  debug('Enable plugins for live development (HMR, NoErrors).')
   webpackConfig.plugins.push(
-    new ExtractTextPlugin('[name].[contenthash].css', {
-      allChunks: true
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoErrorsPlugin(),
+    new webpack.LoaderOptionsPlugin({
+      debug: true,
+      options: {
+        context: __dirname
+      },
+      vue: vueLoaderOptions
     })
+  )
+} else if (__PROD__) {
+  debug('Enable plugins for production (OccurenceOrder, Dedupe & UglifyJS).')
+  webpackConfig.plugins.push(
+    new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.LoaderOptionsPlugin({
+      minimize: true,
+      options: {
+        context: __dirname
+      },
+      vue: vueLoaderOptions
+    }),
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        unused: true,
+        dead_code: true,
+        warnings: false
+      }
+    }),
+    new ExtractTextPlugin('css/[name].[contenthash].css')
   )
 }
 
