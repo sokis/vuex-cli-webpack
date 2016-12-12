@@ -1,6 +1,6 @@
 {
   "name": "vuex-cli-webpack",
-  "version": "2.0.0-beta.0",
+  "version": "2.0.0-beta4",
   "description": "vuex-cli 中的 webpack 任务。",
   "main": "index.js",
   "engines": {
@@ -12,10 +12,10 @@
     "vcompile": "bin/vcompile.js"
   },
   "scripts": {
-    "test": "env NODE_PATH=$NODE_PATH:$PWD/src ./node_modules/.bin/babel-node ./node_modules/.bin/_mocha --compilers js:babel-register --opts ./.mocharc ",
+    "test": "env NODE_PATH=$NODE_PATH:$PWD/src babel-node ./node_modules/.bin/_mocha --compilers js:babel-register --opts ./.mocharc ",
     "start": "npm run build:watch",
-    "build": "./node_modules/.bin/babel src -d lib",
-    "build:watch": "./node_modules/.bin/babel src --watch -d lib",
+    "build": "babel src -d lib",
+    "build:watch": "babel src --watch -d lib",
     "clean": "rimraf lib",
     "publish:patch": "npm test && npm run clean && npm run build && npm version patch && npm publish",
     "publish:minor": "npm test && npm run clean && npm run build && npm version minor && npm publish",
@@ -65,7 +65,6 @@
     "postcss-mixins": "^5.0.0",
     "postcss-reporter": "^2.0.0",
     "postcss-url": "^5.1.2",
-    "rimraf": "^2.5.2",
     "style-loader": "^0.13.0",
     "url-loader": "^0.5.6",
     "vue-hot-reload-api": "^2.0.6",
@@ -75,10 +74,14 @@
     "vue-template-compiler": "^2.1.4",
     "webpack": "^2.1.0-beta.27",
     "webpack-dev-server": "^2.1.0-bate.12",
-    "webpack-merge": "^0.14.1",
+    "webpack-merge": "^0.14.1"
+  },
+  "devDependencies": {
+    "mocha": "^3.2.0",
+    "rimraf": "^2.5.2",
+    "sinon": "^1.17.6",
     "yargs": "^6.5.0"
   },
-  "devDependencies": {},
   "bugs": {
     "url": "https://github.com/sokis/vuex-cli-webpack/issues"
   },
