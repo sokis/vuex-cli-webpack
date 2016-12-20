@@ -22,11 +22,19 @@ const webpackConfig = {
   devtool: config.compiler_devtool
 }
 
+
+let version = config.version === true ? require('moment')().format("YYYYMMDDhmmss") :
+  (typeof config.version === 'string' ? config.version : '')
+
+if (version) {
+  version += '/'
+}
+
 // ------------------------------------
 // Webpack Dev Server
 // ------------------------------------
 webpackConfig.devServer = {
-  contentBase: paths.src(),
+  contentBase: paths.dist(),
   host: config.server_host,
   port: config.server_port,
   quiet: config.compiler_quiet,
@@ -55,8 +63,8 @@ webpackConfig.entry = {
 webpackConfig.output = {
   path: paths.dist(),
   publicPath: config.compiler_public_path,
-  filename: `js/[name].[${config.compiler_hash_type}].js`,
-  chunkFilename: `js/[id].[${config.compiler_hash_type}].js`
+  filename: `${version}js/[name].[${config.compiler_hash_type}].js`,
+  chunkFilename: `${version}js/[id].[${config.compiler_hash_type}].js`
 }
 
 // ------------------------------------
@@ -128,13 +136,13 @@ webpackConfig.module.rules = loaders.concat([{
     loader: 'vue-html-loader'
   },
   /* eslint-disable */
-  { test: /\.woff(\?.*)?$/, loader: 'url-loader?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/font-woff' },
-  { test: /\.woff2(\?.*)?$/, loader: 'url-loader?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/font-woff2' },
-  { test: /\.otf(\?.*)?$/, loader: 'file-loader?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=font/opentype' },
-  { test: /\.ttf(\?.*)?$/, loader: 'url-loader?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/octet-stream' },
-  { test: /\.eot(\?.*)?$/, loader: 'file-loader?prefix=fonts/&name=[path][name].[ext]' },
-  { test: /\.svg(\?.*)?$/, loader: 'url-loader?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=image/svg+xml' },
-  { test: /\.(png|jpg|gif)$/, loader: 'url-loader?limit=8192' }
+  { test: /\.woff(\?.*)?$/, loader: `url-loader?prefix=fonts/&name=${version}[path][name].[ext]&limit=10000&mimetype=application/font-woff` },
+  { test: /\.woff2(\?.*)?$/, loader: `url-loader?prefix=fonts/&name=${version}[path][name].[ext]&limit=10000&mimetype=application/font-woff2` },
+  { test: /\.otf(\?.*)?$/, loader: `file-loader?prefix=fonts/&name=${version}[path][name].[ext]&limit=10000&mimetype=font/opentype` },
+  { test: /\.ttf(\?.*)?$/, loader: `url-loader?prefix=fonts/&name=${version}[path][name].[ext]&limit=10000&mimetype=application/octet-stream` },
+  { test: /\.eot(\?.*)?$/, loader: `file-loader?prefix=fonts/&name=${version}[path][name].[ext]` },
+  { test: /\.svg(\?.*)?$/, loader: `url-loader?prefix=fonts/&name=${version}[path][name].[ext]&limit=10000&mimetype=image/svg+xml` },
+  { test: /\.(png|jpg|gif)$/, loader: `url-loader??prefix=fonts/&name=${version}[path][name].[ext]&limit=8192` }
   /* eslint-enable */
 ])
 
@@ -201,7 +209,7 @@ if (__DEV__) {
         warnings: false
       }
     }),
-    new ExtractTextPlugin('css/[name].[contenthash].css')
+    new ExtractTextPlugin(`${version}css/[name].[contenthash].css`)
   )
 }
 

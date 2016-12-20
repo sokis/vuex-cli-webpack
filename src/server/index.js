@@ -4,8 +4,11 @@ import wpOpt from '../build'
 import open from 'opn'
 import WebpackDevServer from 'webpack-dev-server'
 
+import _debug from 'debug'
+import config from '../config'
+
+const debug = _debug('app:server')
 const DEFAULT_PORT = 8080
-let argv = []
 
 
 function colorInfo(useColor, msg) {
@@ -74,8 +77,8 @@ function startDevServer(wpOpt, options) {
 function reportReadiness(uri, options) {
   var useColor = true
   var startSentence = "Project is running at " + colorInfo(useColor, uri)
-  console.log("\n" + startSentence)
-  console.log("webpack output is served from " + colorInfo(useColor, options.publicPath))
+  debug("\n" + startSentence)
+  debug("webpack output is served from " + colorInfo(useColor, options.publicPath))
   if (options.open)
     open(uri)
 }

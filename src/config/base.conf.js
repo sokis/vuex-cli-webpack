@@ -1,6 +1,7 @@
 /* eslint key-spacing:0 spaced-comment:0 */
 import { resolve } from 'path'
 import fs from 'fs'
+import { argv } from 'yargs'
 
 import _debug from 'debug'
 const debug = _debug('app:config')
@@ -13,6 +14,7 @@ const threshold = 0
 // Default Configuration
 // ========================================================
 const config = {
+  version: argv.version,
   env: process.env.NODE_ENV || 'development',
 
   // ----------------------------------
