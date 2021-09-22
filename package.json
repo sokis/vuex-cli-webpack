@@ -51,7 +51,7 @@
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.26.0",
     "debug": "^2.2.0",
-    "eslint": "^3.10.2",
+    "eslint": "^6.6.0",
     "eslint-friendly-formatter": "^2.0.6",
     "eslint-loader": "^1.6.1",
     "extract-text-webpack-plugin": "^2.0.0-beta.4",
@@ -75,8 +75,8 @@
     "vue-loader": "^10.0.2",
     "vue-style-loader": "^1.0.0",
     "vue-template-compiler": "^2.1.4",
-    "webpack": "^2.1.0-beta.27",
-    "webpack-dev-server": "^2.1.0-bate.12",
+    "webpack": "^4.0.0",
+    "webpack-dev-server": "^4.0.0",
     "webpack-merge": "^0.14.1"
   },
   "devDependencies": {
